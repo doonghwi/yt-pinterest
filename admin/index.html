@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>사용 분석 · 유튜브 핀터레스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../assets/app.css">
+<style>
+  main { max-width: 1180px; margin: 0 auto; padding-block: 8px 60px; display: grid; gap: 22px; }
+  .login { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .login input { font: inherit; border: 0; background: var(--chip); border-radius: 999px; padding: 10px 16px; min-width: 240px; color: var(--fg); }
+  .btn { border: 0; background: var(--red); color: var(--red-ink); border-radius: 999px; padding: 10px 18px; font-weight: 700; cursor: pointer; }
+  .msg { color: var(--muted); font-size: 13.5px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+  .card { border-radius: var(--radius); background: var(--chip); padding: 16px 18px; display: grid; gap: 4px; }
+  .card .k { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  .card .v { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  h2 { font-size: 17px; margin: 6px 0 0; }
+  .tbl { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  td.t { white-space: normal; min-width: 240px; }
+  .bars { display: flex; align-items: flex-end; gap: 6px; height: 140px; padding-top: 10px; border-bottom: 1px solid var(--line); }
+  .bars .b { flex: 1; background: var(--red); border-radius: 6px 6px 0 0; min-height: 2px; position: relative; }
+  .bars .b span { position: absolute; top: -18px; left: 0; right: 0; text-align: center; font-size: 11px; color: var(--muted); }
+  .blab { display: flex; gap: 6px; font-size: 11px; color: var(--muted); }
+  .blab span { flex: 1; text-align: center; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><div class="bar">
+  <span class="logo"><span class="mark"><svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z"/></svg></span><b>사용 분석</b></span>
+  <span class="spacer"></span>
+  <form class="login" id="login"><label for="pw" class="msg">비밀번호</label><input id="pw" type="password" autocomplete="current-password"><button class="btn" type="submit">불러오기</button></form>
+</div></div></header>
+<main class="wrap" id="out"><p class="msg">비밀번호를 넣고 ‘불러오기’를 누르면 크리에이터별 사용 기록이 나옵니다.</p></main>
+<script src="../assets/config.js"></script>
+<script>
+const NAMES = { cooko: "쿠코", chaerny: "채르니", imsungwook: "임성욱", babyfood: "키작은엄마의 성장이유식", seoyoung: "천서영" };
+const EVENTS = { visit: "방문", section: "섹션 바꿈", format: "쇼츠/롱폼 바꿈", sort: "정렬 바꿈", period: "기간 바꿈", open_video: "영상 열기", why_open: "근거 보기", heartbeat: "보는 중(15초)" };
+const SEC = { trend: "요즘 뜨는", audience: "내 시청자", global: "해외", "": "-" };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const mins = (n) => n >= 60 ? `${Math.floor(n / 60)}시간 ${n % 60}분` : `${n}분`;
+let ROWS = [], TITLES = {}, FILTER = "all";
+try { $("#pw").value = sessionStorage.getItem("ytp.pw") || ""; } catch {}
+
+async function titles() {
+  for (const slug of Object.keys(NAMES)) {
+    try {
+      const d = await (await fetch(`../data/${slug}.json`)).json();
+      for (const s of Object.values(d.boards)) for (const l of Object.values(s)) for (const v of l) TITLES[v.id] = v.title;
+    } catch {}
+  }
+}
+
+$("#login").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const pw = $("#pw").value.trim();
+  try { sessionStorage.setItem("ytp.pw", pw); } catch {}
+  const url = (window.YTP_CONFIG || {}).trackUrl;
+  if (!url) { $("#out").innerHTML = `<p class="msg">사용 기록 저장소 주소가 아직 연결되지 않았습니다.</p>`; return; }
+  $("#out").innerHTML = `<p class="msg">불러오는 중…</p>`;
+  try {
+    const [r] = await Promise.all([fetch(`${url}?token=${encodeURIComponent(pw)}`).then((x) => x.json()), titles()]);
+    if (r.error) { $("#out").innerHTML = `<p class="msg">비밀번호가 맞지 않습니다. 다시 확인해 주세요.</p>`; return; }
+    ROWS = r.rows || [];
+    render();
+  } catch (err) {
+    $("#out").innerHTML = `<p class="msg">기록을 불러오지 못했습니다. 잠시 뒤 다시 눌러 주세요.</p>`;
+  }
+});
+
+function render() {
+  const rows = ROWS.filter((r) => FILTER === "all" || r.creator === FILTER);
+  const by = (f) => rows.reduce((m, r) => ((m[f(r)] = (m[f(r)] || 0) + 1), m), {});
+  const minutes = Math.round(rows.filter((r) => r.event === "heartbeat").length * 15 / 60);
+  const visitors = new Set(rows.map((r) => r.visitor)).size;
+  const sessions = new Set(rows.map((r) => r.session)).size;
+  const opens = rows.filter((r) => r.event === "open_video").length;
+
+  const per = Object.keys(NAMES).map((slug) => {
+    const rs = ROWS.filter((r) => r.creator === slug);
+    const last = rs.length ? new Date(Math.max(...rs.map((r) => +new Date(r.ts)))) : null;
+    const secs = rs.filter((r) => r.event === "section").reduce((m, r) => ((m[r.label] = (m[r.label] || 0) + 1), m), {});
+    const hb = rs.filter((r) => r.event === "heartbeat").reduce((m, r) => ((m[r.section] = (m[r.section] || 0) + 1), m), {});
+    const fav = Object.entries(hb).sort((a, b) => b[1] - a[1])[0];
+    return { slug, sessions: new Set(rs.map((r) => r.session)).size, min: Math.round(rs.filter((r) => r.event === "heartbeat").length / 4),
+      opens: rs.filter((r) => r.event === "open_video").length, why: rs.filter((r) => r.event === "why_open").length,
+      fav: fav ? SEC[fav[0]] : "-", last };
+  });
+
+  const days = {}; const today = new Date();
+  for (let i = 13; i >= 0; i--) { const d = new Date(today); d.setDate(d.getDate() - i); days[d.toISOString().slice(0, 10)] = 0; }
+  rows.filter((r) => r.event === "heartbeat").forEach((r) => { const k = String(r.ts).slice(0, 10); if (k in days) days[k] += 0.25; });
+  const maxDay = Math.max(1, ...Object.values(days));
+
+  const ev = Object.entries(by((r) => r.event)).sort((a, b) => b[1] - a[1]);
+  const vids = Object.entries(rows.filter((r) => r.event === "open_video").reduce((m, r) => ((m[r.label] = (m[r.label] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1]).slice(0, 15);
+  const recent = [...rows].filter((r) => r.event !== "heartbeat").sort((a, b) => new Date(b.ts) - new Date(a.ts)).slice(0, 40);
+
+  $("#out").innerHTML = `
+    <div class="filters">${[["all", "전체"], ...Object.entries(NAMES)].map(([k, v]) => `<button class="pill" type="button" data-f="${k}" aria-pressed="${FILTER === k}">${v}</button>`).join("")}</div>
+    <div class="grid">
+      <div class="card"><span class="k">실제로 본 시간</span><span class="v">${mins(minutes)}</span></div>
+      <div class="card"><span class="k">방문(세션)</span><span class="v">${sessions}</span></div>
+      <div class="card"><span class="k">사람(브라우저)</span><span class="v">${visitors}</span></div>
+      <div class="card"><span class="k">영상 열기</span><span class="v">${opens}</span></div>
+    </div>
+    <h2>크리에이터별</h2>
+    <div class="tbl"><table><thead><tr><th>크리에이터</th><th>방문</th><th>본 시간</th><th>영상 열기</th><th>근거 보기</th><th>가장 오래 본 섹션</th><th>마지막 방문</th></tr></thead>
+      <tbody>${per.map((p) => `<tr><td>${NAMES[p.slug]}</td><td>${p.sessions}</td><td>${mins(p.min)}</td><td>${p.opens}</td><td>${p.why}</td><td>${p.fav}</td><td>${p.last ? p.last.toLocaleString("ko-KR") : "아직 없음"}</td></tr>`).join("")}</tbody></table></div>
+    <h2>날짜별 본 시간 (분, 최근 14일)</h2>
+    <div class="bars">${Object.values(days).map((v) => `<div class="b" style="height:${(v / maxDay) * 100}%"><span>${v ? Math.round(v) : ""}</span></div>`).join("")}</div>
+    <div class="blab">${Object.keys(days).map((d) => `<span>${d.slice(5).replace("-", "/")}</span>`).join("")}</div>
+    <h2>버튼별 클릭</h2>
+    <div class="tbl"><table><thead><tr><th>무엇</th><th>횟수</th></tr></thead><tbody>${ev.map(([k, n]) => `<tr><td>${EVENTS[k] || esc(k)}</td><td>${n}</td></tr>`).join("") || `<tr><td colspan="2">아직 기록이 없습니다.</td></tr>`}</tbody></table></div>
+    <h2>많이 연 영상</h2>
+    <div class="tbl"><table><thead><tr><th>영상</th><th>열기</th></tr></thead><tbody>${vids.map(([id, n]) => `<tr><td class="t"><a href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener">${esc(TITLES[id] || id)}</a></td><td>${n}</td></tr>`).join("") || `<tr><td colspan="2">아직 없습니다.</td></tr>`}</tbody></table></div>
+    <h2>최근 행동</h2>
+    <div class="tbl"><table><thead><tr><th>시각</th><th>크리에이터</th><th>행동</th><th>내용</th><th>섹션</th><th>형식</th></tr></thead>
+      <tbody>${recent.map((r) => `<tr><td>${new Date(r.ts).toLocaleString("ko-KR")}</td><td>${NAMES[r.creator] || esc(r.creator)}</td><td>${EVENTS[r.event] || esc(r.event)}</td><td class="t">${esc(r.event === "open_video" || r.event === "why_open" ? (TITLES[r.label] || r.label) : r.event === "section" ? SEC[r.label] || r.label : r.label)}</td><td>${SEC[r.section] || "-"}</td><td>${r.format === "long" ? "롱폼" : r.format === "shorts" ? "쇼츠" : "-"}</td></tr>`).join("") || `<tr><td colspan="6">아직 기록이 없습니다.</td></tr>`}</tbody></table></div>`;
+  for (const b of document.querySelectorAll("[data-f]")) b.onclick = () => { FILTER = b.dataset.f; render(); };
+}
+</script>
+</body>
+</html>
