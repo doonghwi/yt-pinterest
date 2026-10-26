@@ -11,7 +11,7 @@
   const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
                   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
 
-  const res = await fetch(`../data/${slug}.json`, { cache: "no-cache" });
+  const res = await fetch(`../data/${slug}.json?v=${Date.now()}`, { cache: "no-cache" });
   const D = await res.json();
   const st = {
     section: store.get(`ytp.${slug}.sec`, "trend"),
