@@ -62,7 +62,7 @@
         <ul hidden>${(v.why.reasons || []).map((r) => `<li>${esc(r)}</li>`).join("")}</ul></div>` : "";
     return `<div class="pin ${v.format}">
       <a class="img" href="${url}" target="_blank" rel="noopener" data-open="${v.id}" aria-label="${esc(v.title)} 유튜브에서 보기">
-        <img loading="lazy" alt="" src="${esc(v.thumb)}" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'">
+        <img loading="lazy" alt="" src="https://i.ytimg.com/vi/${v.id}/sddefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'">
         <span class="badge">${badge}</span><span class="rank">${i + 1}</span><span class="dur">${mm}:${ss}</span>
       </a>
       <div class="ptitle">${esc(v.title)}</div>
