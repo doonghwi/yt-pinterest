@@ -7,7 +7,7 @@
 <title>사용 분석 · 유튜브 핀터레스트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="../assets/app.css?v=1793046529">
+<link rel="stylesheet" href="../assets/app.css?v=1793047886">
 <style>
   main { max-width: 1180px; margin: 0 auto; padding-block: 8px 60px; display: grid; gap: 22px; }
   .login { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -39,7 +39,7 @@
   <form class="login" id="login"><label for="pw" class="msg">비밀번호</label><input id="pw" type="password" autocomplete="current-password"><button class="btn" type="submit">불러오기</button></form>
 </div></div></header>
 <main class="wrap" id="out"><p class="msg">비밀번호를 넣고 ‘불러오기’를 누르면 크리에이터별 사용 기록이 나옵니다.</p></main>
-<script src="../assets/config.js?v=1793046529"></script>
+<script src="../assets/config.js?v=1793047886"></script>
 <script>
 const NAMES = { cooko: "쿠코", chaerny: "채르니", imsungwook: "임성욱", babyfood: "키작은엄마의 성장이유식", seoyoung: "천서영" };
 const EVENTS = { visit: "방문", section: "섹션 바꿈", format: "쇼츠/롱폼 바꿈", sort: "정렬 바꿈", period: "기간 바꿈", open_video: "영상 열기", why_open: "근거 보기", heartbeat: "보는 중(15초)" };
@@ -69,7 +69,7 @@ $("#login").addEventListener("submit", async (e) => {
   try {
     const [r] = await Promise.all([fetch(`${url}?token=${encodeURIComponent(pw)}`).then((x) => x.json()), titles()]);
     if (r.error) { $("#out").innerHTML = `<p class="msg">비밀번호가 맞지 않습니다. 다시 확인해 주세요.</p>`; return; }
-    ROWS = r.rows || [];
+    ROWS = (r.rows || []).filter((x) => !String(x.creator).startsWith("_"));  // _test 같은 시험 기록 제외
     render();
   } catch (err) {
     $("#out").innerHTML = `<p class="msg">기록을 불러오지 못했습니다. 잠시 뒤 다시 눌러 주세요.</p>`;
