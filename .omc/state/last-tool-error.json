@@ -1,0 +1,7 @@
+{
+  "tool_name": "mcp__Claude_Browser__computer",
+  "tool_input_preview": "{\"action\":\"left_click\",\"tabId\":\"tab-3\",\"ref\":\"ref_1\",\"action_summary\":\"Opens the first card's reasons\"}",
+  "error": "ref map not initialized; call read_page first",
+  "timestamp": "2026-10-26T20:27:54.278Z",
+  "retry_count": 1
+}
