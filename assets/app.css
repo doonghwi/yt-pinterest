@@ -14,9 +14,12 @@
   --icon-filter: none;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --pad: 40px;
-  --card-w: 320px;
+  /* 쇼츠 카드: 화면 높이에 맞춰 줄임 → 섹션 제목(‹ › 버튼)·썸네일·제목·조회수가 한 화면에 다 들어오게.
+     290px = 상단 바 71 + 섹션 제목 44 + 위 여백 22 + 제목 2줄·조회수 약 120 + 아래 숨 쉴 틈 */
+  --card-w: clamp(180px, calc((100vh - 290px) * 9 / 16), 320px);
   --gap: 20px;
 }
+@supports (height: 100dvh) { :root { --card-w: clamp(180px, calc((100dvh - 290px) * 9 / 16), 320px); } }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) { --bg: #111111; --fg: #f1f1f1; --muted: #a9a9a9; --chip: #262626; --chip-hover: #333333; --knob: #3a3a3a;
     --line: #262626; --icon-filter: invert(1); color-scheme: dark; }
@@ -86,9 +89,9 @@ main { padding-bottom: 0; }
 /* 마우스 올림: 아래로 짙어지는 그늘 + 잘 된 이유 + 빨간 버튼 */
 .why { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; padding: 20px 18px; pointer-events: none;
   background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.6) 45%, rgba(0,0,0,.88)); color: #fff; opacity: 0; transition: opacity .18s ease; }
-.why p { margin: 0; font-size: 19px; font-weight: 700; line-height: 27.55px; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.why p { margin: 0; font-size: clamp(14px, calc(var(--card-w) * .06), 19px); font-weight: 700; line-height: 1.45; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
 .why p .hl { color: var(--red-hi); }
-.why .apply { pointer-events: auto; border: 0; width: 100%; background: var(--red); color: #fff; border-radius: 999px; padding: 14px 0; font-size: 16px; font-weight: 700; line-height: 24px; cursor: pointer; }
+.why .apply { pointer-events: auto; border: 0; width: 100%; background: var(--red); color: #fff; border-radius: 999px; padding: clamp(9px, calc(var(--card-w) * .044), 14px) 0; font-size: clamp(14px, calc(var(--card-w) * .05), 16px); font-weight: 700; line-height: 24px; cursor: pointer; }
 .why .apply:hover { filter: brightness(1.08); }
 .card.long .why { gap: 12px; padding: 16px; }
 .card.long .why p { font-size: 16px; line-height: 23px; -webkit-line-clamp: 3; }
