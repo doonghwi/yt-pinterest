@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>유튜브 핀터레스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="../../assets/grid.css?v=1793081932">
+</head>
+<body data-slug="chaerny">
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <span class="logo"><span class="mark"><svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z"/></svg></span><b>유튜브 핀터레스트</b></span>
+      <nav class="tabs" id="tabs" aria-label="섹션"></nav>
+      <span class="spacer"></span>
+      <div class="tools">
+        <div class="seg" id="fmt" role="group" aria-label="형식"></div>
+        <select class="select" id="sort" aria-label="정렬">
+          <option value="mult">잘 된 순</option>
+          <option value="views">조회수 순</option>
+          <option value="new">최신 순</option>
+        </select>
+        <select class="select" id="days" aria-label="기간">
+          <option value="7">최근 7일</option>
+          <option value="30">최근 30일</option>
+          <option value="60">최근 60일</option>
+        </select>
+      </div>
+    </div>
+    <div class="sub" id="sub"></div>
+  </div>
+</header>
+<main class="wrap">
+  <div class="board" id="board"></div>
+  <div class="empty" id="empty" hidden>이 기간에는 보여 줄 영상이 없어요. 기간을 늘려 보세요.</div>
+</main>
+<script src="../../assets/config.js?v=1793081932"></script>
+<script src="../../assets/track.js?v=1793081932"></script>
+<script src="../../assets/grid.js?v=1793081932"></script>
+</body>
+</html>

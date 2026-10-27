@@ -7,7 +7,7 @@
 <title>사용 분석 · 유튜브 핀터레스트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="../assets/app.css?v=1793047886">
+<link rel="stylesheet" href="../assets/grid.css?v=1793081932">
 <style>
   main { max-width: 1180px; margin: 0 auto; padding-block: 8px 60px; display: grid; gap: 22px; }
   .login { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -39,10 +39,12 @@
   <form class="login" id="login"><label for="pw" class="msg">비밀번호</label><input id="pw" type="password" autocomplete="current-password"><button class="btn" type="submit">불러오기</button></form>
 </div></div></header>
 <main class="wrap" id="out"><p class="msg">비밀번호를 넣고 ‘불러오기’를 누르면 크리에이터별 사용 기록이 나옵니다.</p></main>
-<script src="../assets/config.js?v=1793047886"></script>
+<script src="../assets/config.js?v=1793081932"></script>
 <script>
 const NAMES = { cooko: "쿠코", chaerny: "채르니", imsungwook: "임성욱", babyfood: "키작은엄마의 성장이유식", seoyoung: "천서영" };
-const EVENTS = { visit: "방문", section: "섹션 바꿈", format: "쇼츠/롱폼 바꿈", sort: "정렬 바꿈", period: "기간 바꿈", open_video: "영상 열기", why_open: "근거 보기", heartbeat: "보는 중(15초)" };
+const EVENTS = { visit: "방문", section: "섹션 바꿈", format: "쇼츠/롱폼 바꿈", sort: "정렬 바꿈", period: "기간 바꿈", open_video: "영상 열기", why_open: "근거 보기", why_hover: "이유 봄(마우스 올림)", apply_click: "내 영상에 적용하기", scroll_arrow: "‹ › 넘기기", heartbeat: "보는 중(15초)" };
+const VID = new Set(["open_video", "why_open", "why_hover", "apply_click"]);
+const secOf = (r) => SEC[r.section || (r.event === "scroll_arrow" ? r.label : r.value)] || "-";
 const SEC = { trend: "요즘 뜨는", audience: "내 시청자", global: "해외", "": "-" };
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -83,6 +85,7 @@ function render() {
   const visitors = new Set(rows.map((r) => r.visitor)).size;
   const sessions = new Set(rows.map((r) => r.session)).size;
   const opens = rows.filter((r) => r.event === "open_video").length;
+  const applies = rows.filter((r) => r.event === "apply_click").length;
 
   const per = Object.keys(NAMES).map((slug) => {
     const rs = ROWS.filter((r) => r.creator === slug);
@@ -91,7 +94,7 @@ function render() {
     const hb = rs.filter((r) => r.event === "heartbeat").reduce((m, r) => ((m[r.section] = (m[r.section] || 0) + 1), m), {});
     const fav = Object.entries(hb).sort((a, b) => b[1] - a[1])[0];
     return { slug, sessions: new Set(rs.map((r) => r.session)).size, min: Math.round(rs.filter((r) => r.event === "heartbeat").length / 4),
-      opens: rs.filter((r) => r.event === "open_video").length, why: rs.filter((r) => r.event === "why_open").length,
+      opens: rs.filter((r) => r.event === "open_video").length, why: rs.filter((r) => r.event === "why_open" || r.event === "why_hover").length, apply: rs.filter((r) => r.event === "apply_click").length,
       fav: fav ? SEC[fav[0]] : "-", last };
   });
 
@@ -111,10 +114,11 @@ function render() {
       <div class="card"><span class="k">방문(세션)</span><span class="v">${sessions}</span></div>
       <div class="card"><span class="k">사람(브라우저)</span><span class="v">${visitors}</span></div>
       <div class="card"><span class="k">영상 열기</span><span class="v">${opens}</span></div>
+      <div class="card"><span class="k">'내 영상에 적용하기' 누름</span><span class="v">${applies}</span></div>
     </div>
     <h2>크리에이터별</h2>
-    <div class="tbl"><table><thead><tr><th>크리에이터</th><th>방문</th><th>본 시간</th><th>영상 열기</th><th>근거 보기</th><th>가장 오래 본 섹션</th><th>마지막 방문</th></tr></thead>
-      <tbody>${per.map((p) => `<tr><td>${NAMES[p.slug]}</td><td>${p.sessions}</td><td>${mins(p.min)}</td><td>${p.opens}</td><td>${p.why}</td><td>${p.fav}</td><td>${p.last ? p.last.toLocaleString("ko-KR") : "아직 없음"}</td></tr>`).join("")}</tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>크리에이터</th><th>방문</th><th>본 시간</th><th>영상 열기</th><th>이유 봄</th><th>적용하기 누름</th><th>가장 오래 본 섹션</th><th>마지막 방문</th></tr></thead>
+      <tbody>${per.map((p) => `<tr><td>${NAMES[p.slug]}</td><td>${p.sessions}</td><td>${mins(p.min)}</td><td>${p.opens}</td><td>${p.why}</td><td>${p.apply}</td><td>${p.fav}</td><td>${p.last ? p.last.toLocaleString("ko-KR") : "아직 없음"}</td></tr>`).join("")}</tbody></table></div>
     <h2>날짜별 본 시간 (분, 최근 14일)</h2>
     <div class="bars">${Object.values(days).map((v) => `<div class="b" style="height:${(v / maxDay) * 100}%"><span>${v ? Math.round(v) : ""}</span></div>`).join("")}</div>
     <div class="blab">${Object.keys(days).map((d) => `<span>${d.slice(5).replace("-", "/")}</span>`).join("")}</div>
@@ -124,7 +128,7 @@ function render() {
     <div class="tbl"><table><thead><tr><th>영상</th><th>열기</th></tr></thead><tbody>${vids.map(([id, n]) => `<tr><td class="t"><a href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener">${esc(TITLES[id] || id)}</a></td><td>${n}</td></tr>`).join("") || `<tr><td colspan="2">아직 없습니다.</td></tr>`}</tbody></table></div>
     <h2>최근 행동</h2>
     <div class="tbl"><table><thead><tr><th>시각</th><th>크리에이터</th><th>행동</th><th>내용</th><th>섹션</th><th>형식</th></tr></thead>
-      <tbody>${recent.map((r) => `<tr><td>${new Date(r.ts).toLocaleString("ko-KR")}</td><td>${NAMES[r.creator] || esc(r.creator)}</td><td>${EVENTS[r.event] || esc(r.event)}</td><td class="t">${esc(r.event === "open_video" || r.event === "why_open" ? (TITLES[r.label] || r.label) : r.event === "section" ? SEC[r.label] || r.label : r.label)}</td><td>${SEC[r.section] || "-"}</td><td>${r.format === "long" ? "롱폼" : r.format === "shorts" ? "쇼츠" : "-"}</td></tr>`).join("") || `<tr><td colspan="6">아직 기록이 없습니다.</td></tr>`}</tbody></table></div>`;
+      <tbody>${recent.map((r) => `<tr><td>${new Date(r.ts).toLocaleString("ko-KR")}</td><td>${NAMES[r.creator] || esc(r.creator)}</td><td>${EVENTS[r.event] || esc(r.event)}</td><td class="t">${esc(VID.has(r.event) ? (TITLES[r.label] || r.label) : r.event === "section" ? SEC[r.label] || r.label : r.label)}</td><td>${secOf(r)}</td><td>${r.format === "long" ? "롱폼" : r.format === "shorts" ? "쇼츠" : "-"}</td></tr>`).join("") || `<tr><td colspan="6">아직 기록이 없습니다.</td></tr>`}</tbody></table></div>`;
   for (const b of document.querySelectorAll("[data-f]")) b.onclick = () => { FILTER = b.dataset.f; render(); };
 }
 </script>

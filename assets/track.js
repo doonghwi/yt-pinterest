@@ -1,6 +1,7 @@
 // 사용 기록: 무엇을 누르고 얼마나 봤는지 구글 스프레드시트(Apps Script)로 보낸다.
 (function () {
-  const URL = (window.YTP_CONFIG || {}).trackUrl || "";
+  const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);   // 내 컴퓨터에서 확인할 때는 기록하지 않음
+  const URL = local ? "" : (window.YTP_CONFIG || {}).trackUrl || "";
   const creator = document.body.dataset.slug || "unknown";
   const get = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
   const set = (k, v) => { try { localStorage.setItem(k, v); } catch {} };

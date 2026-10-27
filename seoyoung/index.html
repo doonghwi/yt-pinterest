@@ -6,39 +6,32 @@
 <meta name="robots" content="noindex, nofollow">
 <title>유튜브 핀터레스트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="../assets/app.css?v=1793047886">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap">
+<link rel="stylesheet" href="../assets/app.css?v=1793081932">
 </head>
 <body data-slug="seoyoung">
 <header class="top">
-  <div class="wrap">
-    <div class="bar">
-      <span class="logo"><span class="mark"><svg viewBox="0 0 10 12" aria-hidden="true"><path d="M0 0l10 6-10 6z"/></svg></span><b>유튜브 핀터레스트</b></span>
-      <nav class="tabs" id="tabs" aria-label="섹션"></nav>
-      <span class="spacer"></span>
-      <div class="tools">
-        <div class="seg" id="fmt" role="group" aria-label="형식"></div>
-        <select class="select" id="sort" aria-label="정렬">
-          <option value="mult">잘 된 순</option>
-          <option value="views">조회수 순</option>
-          <option value="new">최신 순</option>
-        </select>
-        <select class="select" id="days" aria-label="기간">
-          <option value="7">최근 7일</option>
-          <option value="30">최근 30일</option>
-          <option value="60">최근 60일</option>
-        </select>
-      </div>
-    </div>
-    <div class="sub" id="sub"></div>
+  <span class="logo"><span class="mark"><img src="../assets/icons/play.svg" width="15" height="15" alt=""></span><b>유튜브 핀터레스트</b></span>
+  <span class="spacer"></span>
+  <div class="tools">
+    <div class="seg" id="fmt" role="group" aria-label="형식"></div>
+    <label class="pick"><select id="sort" aria-label="정렬">
+      <option value="mult">잘 된 순</option>
+      <option value="views">조회수 순</option>
+      <option value="new">최신 순</option>
+    </select><img class="chev" src="../assets/icons/chevron-down.svg" width="11" height="8" alt=""></label>
+    <label class="pick"><select id="days" aria-label="기간">
+      <option value="7">최근 7일</option>
+      <option value="30">최근 30일</option>
+      <option value="60">최근 60일</option>
+    </select><img class="chev" src="../assets/icons/chevron-down.svg" width="11" height="8" alt=""></label>
   </div>
 </header>
-<main class="wrap">
-  <div class="board" id="board"></div>
-  <div class="empty" id="empty" hidden>이 기간에는 보여 줄 영상이 없어요. 기간을 늘려 보세요.</div>
-</main>
-<script src="../assets/config.js?v=1793047886"></script>
-<script src="../assets/track.js?v=1793047886"></script>
-<script src="../assets/app.js?v=1793047886"></script>
+<main id="rows"></main>
+<footer class="foot"></footer>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="../assets/config.js?v=1793081932"></script>
+<script src="../assets/track.js?v=1793081932"></script>
+<script src="../assets/app.js?v=1793081932"></script>
 </body>
 </html>
