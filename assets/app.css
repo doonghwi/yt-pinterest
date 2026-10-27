@@ -91,7 +91,7 @@ main { padding-bottom: 0; }
   background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.6) 45%, rgba(0,0,0,.88)); color: #fff; opacity: 0; transition: opacity .18s ease; }
 .why p { margin: 0; font-size: clamp(14px, calc(var(--card-w) * .06), 19px); font-weight: 700; line-height: 1.45; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
 .why p .hl { color: var(--red-hi); }
-.why .apply { pointer-events: auto; border: 0; width: 100%; background: var(--red); color: #fff; border-radius: 999px; padding: clamp(9px, calc(var(--card-w) * .044), 14px) 0; font-size: clamp(14px, calc(var(--card-w) * .05), 16px); font-weight: 700; line-height: 24px; cursor: pointer; }
+.why .apply { pointer-events: auto; display: block; text-align: center; border: 0; width: 100%; background: var(--red); color: #fff; border-radius: 999px; padding: clamp(9px, calc(var(--card-w) * .044), 14px) 0; font-size: clamp(14px, calc(var(--card-w) * .05), 16px); font-weight: 700; line-height: 24px; cursor: pointer; }
 .why .apply:hover { filter: brightness(1.08); }
 .card.long .why { gap: 12px; padding: 16px; }
 .card.long .why p { font-size: 16px; line-height: 23px; -webkit-line-clamp: 3; }

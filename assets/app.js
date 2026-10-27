@@ -53,7 +53,7 @@
         <span class="badge">${label} <b>×${m}</b></span>
         <span class="rank">${i + 1}</span>
         <span class="dur">${mm}:${ss}</span>
-        <div class="why">${why}<button class="apply" type="button" data-apply="${v.id}">내 영상에 적용하기</button></div>
+        <div class="why">${why}<a class="apply" href="${url}" target="_blank" rel="noopener" data-open="${v.id}">이 영상 보러가기</a></div>
       </div>
       <div class="ctitle">${esc(v.title)}</div>
       <div class="cmeta"><span>${esc(v.channel)}</span><span>조회 ${num(v.views)}</span><span>${ago(v.age)}</span>${v.overlap ? `<span>내 시청자 ${v.overlap}명 구독</span>` : ""}</div>
@@ -92,10 +92,6 @@
     nav[1].disabled = row.scrollLeft >= max;
   }
 
-  // 토스트 (준비 중 안내)
-  let tt;
-  function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(tt); tt = setTimeout(() => (t.hidden = true), 2600); }
-
   const touch = matchMedia("(hover: none)").matches;
   rows.addEventListener("click", (e) => {
     const nav = e.target.closest("[data-dir]");
@@ -104,12 +100,6 @@
       const step = Math.max(row.clientWidth - 120, 200);
       row.scrollBy({ left: dir * step, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       T("scroll_arrow", sec.dataset.sec, dir > 0 ? "next" : "prev");
-      return;
-    }
-    const ap = e.target.closest("[data-apply]");
-    if (ap) {
-      toast("곧 열릴 기능이에요. 관심 가져 주셔서 고마워요!");
-      T("apply_click", ap.dataset.apply, ap.closest(".sec").dataset.sec);
       return;
     }
     const a = e.target.closest("[data-open]");
