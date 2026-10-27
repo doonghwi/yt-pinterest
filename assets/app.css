@@ -91,11 +91,23 @@ main { padding-bottom: 0; }
   background: linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.6) 45%, rgba(0,0,0,.88)); color: #fff; opacity: 0; transition: opacity .18s ease; }
 .why p { margin: 0; font-size: clamp(14px, calc(var(--card-w) * .06), 19px); font-weight: 700; line-height: 1.45; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
 .why p .hl { color: var(--red-hi); }
+/* 근거: 영상(자막) · 댓글 */
+.why .evs { display: flex; flex-direction: column; gap: 8px; margin-top: -4px; }
+.why:has(.evs) p { -webkit-line-clamp: 3; }
+.why .ev { display: flex; gap: 8px; align-items: flex-start; font-size: clamp(12.5px, calc(var(--card-w) * .048), 15px); font-weight: 500; line-height: 1.45; }
+.why .ev b { flex: none; padding: 1px 6px; border-radius: 6px; background: rgba(255,255,255,.2); font-size: .82em; font-weight: 700; line-height: 1.5; margin-top: 1px; }
+.why .ev span { min-width: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.why .ev em { font-style: normal; font-weight: 700; color: var(--red-hi); }
 .why .apply { pointer-events: auto; display: block; text-align: center; border: 0; width: 100%; background: var(--red); color: #fff; border-radius: 999px; padding: clamp(9px, calc(var(--card-w) * .044), 14px) 0; font-size: clamp(14px, calc(var(--card-w) * .05), 16px); font-weight: 700; line-height: 24px; cursor: pointer; }
 .why .apply:hover { filter: brightness(1.08); }
 .card.long .why { gap: 12px; padding: 16px; }
 .card.long .why p { font-size: 16px; line-height: 23px; -webkit-line-clamp: 3; }
 .card.long .why .apply { padding: 10px 0; font-size: 15px; }
+.card.long .why:has(.evs) { gap: 10px; }
+.card.long .why:has(.evs) p { font-size: 15px; line-height: 21px; -webkit-line-clamp: 2; }
+.card.long .why .evs { gap: 4px; margin-top: 0; }
+.card.long .why .ev { font-size: 13.5px; }
+.card.long .why .ev span { -webkit-line-clamp: 2; }
 .media.on { box-shadow: 0 10px 28px rgba(0,0,0,.22); }
 .media.on .why { opacity: 1; }
 .media.on .badge, .media.on .dur { opacity: 0; }
@@ -132,5 +144,9 @@ main { padding-bottom: 0; }
   .card.long .why p { font-size: 14px; line-height: 20px; }
 }
 .card.long { --card-w: 460px; }
-@media (max-width: 720px) { .card.long { --card-w: 300px; } }
+@media (max-width: 720px) { .card.long { --card-w: 300px; }
+  .card.long .why:has(.evs) { gap: 8px; padding: 12px; }
+  .card.long .why:has(.evs) p { font-size: 13.5px; line-height: 19px; -webkit-line-clamp: 1; }
+  .card.long .why .ev { font-size: 12.5px; line-height: 1.4; }
+  .card.long .why:has(.evs) .apply { padding: 7px 0; font-size: 13.5px; line-height: 20px; } }
 @media (prefers-reduced-motion: reduce) { .why, .media, .badge, .dur { transition: none; } }
