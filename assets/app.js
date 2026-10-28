@@ -45,11 +45,7 @@
     const mm = Math.floor(v.sec / 60), ss = String(v.sec % 60).padStart(2, "0");
     const url = v.format === "shorts" ? `https://www.youtube.com/shorts/${v.id}` : `https://www.youtube.com/watch?v=${v.id}`;
     const thumb = v.format === "shorts" ? "sddefault" : "hqdefault";
-    // 근거 한 줄: 맨 앞 시간(3:12)은 빨간 글씨
-    const ev = (tag, s) => s ? `<div class="ev"><b>${tag}</b><span>${esc(s).replace(/^(\d{1,2}:\d{2}(?::\d{2})?(?:~\d{1,2}:\d{2})?)/, "<em>$1</em>")}</span></div>` : "";
-    const evs = v.why ? ev("영상", v.why.video) + ev("댓글", v.why.comment) : "";
-    const why = (v.why ? `<p><span class="hl">${label} ×${m}배</span> 조회수 · ${esc(v.why.summary)}</p>` : `<p><span class="hl">${label} ×${m}배</span> 조회수가 나왔습니다.</p>`)
-      + (evs ? `<div class="evs">${evs}</div>` : "");
+    const why = v.why ? `<p><span class="hl">${label} ×${m}배</span> 조회수 · ${esc(v.why.summary)}</p>` : `<p><span class="hl">${label} ×${m}배</span> 조회수가 나왔습니다.</p>`;
     return `<article class="card ${v.format}">
       <div class="media" data-id="${v.id}">
         <img class="th" loading="lazy" alt="" src="https://i.ytimg.com/vi/${v.id}/${thumb}.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'">
